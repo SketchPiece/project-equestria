@@ -1,0 +1,9 @@
+{
+  "includeForse": ["versions", "assets", "libraries"],
+  "ignoreFiles": [".DS_Store"],
+  "validateOptions": {
+    "include": ["mods", "servers.dat"],
+    "exclude": []
+  },
+  "downloadUri": "http://localhost:3000/assets"
+}
