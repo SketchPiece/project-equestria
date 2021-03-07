@@ -44,11 +44,11 @@ export default class ConfigManager {
   }
 
   static getAuthToken() {
-    return config.settings.launcher.authToken
+    return config.user.authToken
   }
 
   static setAuthToken(token) {
-    config.settings.launcher.authToken = token
+    config.user.authToken = token
   }
 
   static getCommonDirectory() {
@@ -59,11 +59,30 @@ export default class ConfigManager {
     return 'MCLauncherNatives'
   }
 
+  static getAutoConnect(def = false) {
+    return !def
+      ? config.settings.game.autoConnect
+      : DEFAULT_CONFIG.settings.game.autoConnect
+  }
+
+  static setAutoConnect(state) {
+    config.settings.game.autoConnect = state
+  }
+
+  static getServer() {
+    return appConfig.server
+  }
+
   static getFullscreen(def = false) {
     return !def
       ? config.settings.game.fullscreen
       : DEFAULT_CONFIG.settings.game.fullscreen
   }
+
+  static setFullscreen(state) {
+    config.settings.game.fullscreen = state
+  }
+
   static getGameWidth(def = false) {
     return !def
       ? config.settings.game.resWidth
@@ -86,10 +105,19 @@ export default class ConfigManager {
     return !def ? config.settings.java.maxRAM : _resolveMaxRAM()
   }
 
-  static getMinRAM(def = false) {
-    return !def
-      ? config.settings.java.minRAM
-      : DEFAULT_CONFIG.settings.java.minRAM
+  static setMaxRAM(ram) {
+    config.settings.java.maxRAM = ram
+  }
+
+  static getAbsoluteMaxRAM() {
+    const mem = os.totalmem()
+    const gT16 = mem - 16000000000
+    return Math.floor(
+      (mem -
+        1000000000 -
+        (gT16 > 0 ? Number.parseInt(gT16 / 8) + 16000000000 / 4 : mem / 4)) /
+        1000000000
+    )
   }
 
   static save() {
@@ -132,7 +160,7 @@ export default class ConfigManager {
 
 function _resolveMaxRAM() {
   const mem = os.totalmem()
-  return mem >= 8000000000 ? '4G' : mem >= 6000000000 ? '3G' : '2G'
+  return mem >= 8000000000 ? '4000M' : mem >= 6000000000 ? '3000M' : '2000M'
 }
 
 // function _resolveMinRAM() {
@@ -142,7 +170,6 @@ function _resolveMaxRAM() {
 const DEFAULT_CONFIG = {
   settings: {
     java: {
-      // minRAM: _resolveMinRAM(),
       maxRAM: _resolveMaxRAM(),
       executable: null,
       jvmOptions: [
@@ -156,13 +183,14 @@ const DEFAULT_CONFIG = {
       resWidth: 1280,
       resHeight: 720,
       fullscreen: false,
-      autoConnect: true,
-      launchDetached: true
+      autoConnect: true
     },
     launcher: {
       allowPrerelease: false,
-      dataDirectory: DATA_PATH,
-      authToken: null
+      dataDirectory: DATA_PATH
     }
+  },
+  user: {
+    authToken: null
   }
 }

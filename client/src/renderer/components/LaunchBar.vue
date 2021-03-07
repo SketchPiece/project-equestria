@@ -5,7 +5,7 @@
         <div class="gradient" />
       </div>
       <LaunchButton :disabled="open" @click="launchClickHandler" />
-      <button @click="toggleSettings" class="settings" />
+      <button :disabled="launching" @click="toggleSettings" class="settings" />
       <div class="block auth">
         <span class="auth-info">Введите данные для входа в игру</span>
         <input
@@ -15,10 +15,6 @@
           placeholder="Логин"
           :disabled="open"
         />
-        <!-- <label for="remember-pass" class="check-remember">
-          <input type="checkbox" id="remember-pass" :disabled="open" />
-          <span>Запомнить пароль</span>
-        </label> -->
         <Checkbox :disabled="open">Запомнить пароль</Checkbox>
         <input
           v-model="password"
@@ -28,9 +24,7 @@
         />
       </div>
       <div v-if="settings" class="block info settings-block">
-        <Settings />
-        <!-- <h3>кыр сасичка</h3> -->
-        <!-- <button @click="closeBar">Сохранить</button> -->
+        <Settings @close="toggleSettings" />
       </div>
       <div v-else class="block info">
         <span class="status">{{ download.status }}</span>
@@ -41,7 +35,6 @@
 </template>
 
 <script>
-// import { AuthService } from '../services/auth.service'
 import Progress from './Progress'
 import LaunchButton from './LaunchButton'
 import Settings from './Settings'
@@ -64,7 +57,8 @@ export default {
     open: false,
     error: '',
     visible: false,
-    settings: false
+    settings: false,
+    launching: false
   }),
   mounted() {
     setTimeout(() => (this.visible = true), 100)
@@ -73,8 +67,8 @@ export default {
     async launchClickHandler() {
       try {
         this.error = ''
-        // this.temp = !this.temp
         // await AuthService.login(this.username, this.password)
+        this.launching = true
         this.$emit('launch')
       } catch (e) {
         this.error = 'Incorrect username or password'
@@ -90,6 +84,7 @@ export default {
       this.open = true
     },
     closeBar() {
+      this.launching = false
       this.open = false
       if (this.settings) setTimeout(() => (this.settings = false), 1000)
     },

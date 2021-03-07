@@ -1,4 +1,8 @@
 {
   "root_name": ".sketchlauncher",
-  "api": "http://localhost:3000"
+  "api": "http://localhost:3000",
+  "server": {
+    "host": "1.1.1.1",
+    "port": ""
+  }
 }

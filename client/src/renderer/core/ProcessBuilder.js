@@ -164,6 +164,8 @@ export default class ProcessBuilder {
       }
     }
 
+    this._processAutoConnectArg(mcArgs)
+
     // Prepare game resolution
     if (ConfigManager.getFullscreen()) {
       mcArgs.push('--fullscreen')
@@ -175,26 +177,19 @@ export default class ProcessBuilder {
       mcArgs.push(ConfigManager.getGameHeight())
     }
 
-    // Mod List File Argument
-    // mcArgs.push('--modListFile')
-    // if (this._lteMinorVersion(9)) {
-    //   mcArgs.push(path.basename(this.fmlDir))
-    // } else {
-    //   mcArgs.push('absolute:' + this.fmlDir)
-    // }
-
-    // LiteLoader
-    // if (this.usingLiteLoader) {
-    //   mcArgs.push('--modRepo')
-    //   mcArgs.push(this.llDir)
-
-    //   // Set first arg to liteloader tweak class
-    //   mcArgs.unshift('com.mumfrey.liteloader.launch.LiteLoaderTweaker')
-    //   mcArgs.unshift('--tweakClass')
-    // }
-    // console.log('MC_ARGS', mcArgs)
-
     return mcArgs
+  }
+
+  _processAutoConnectArg(args) {
+    if (ConfigManager.getAutoConnect()) {
+      const server = ConfigManager.getServer()
+      args.push('--server')
+      args.push(server.host)
+      if (server.port) {
+        args.push('--port')
+        args.push(server.port)
+      }
+    }
   }
 
   _processClassPathList(list) {
@@ -243,7 +238,7 @@ export default class ProcessBuilder {
           let shouldExclude = false
 
           // Exclude noted files.
-          exclusionArr.forEach(function(exclusion) {
+          exclusionArr.forEach((exclusion) => {
             if (fileName.indexOf(exclusion) > -1) {
               shouldExclude = true
             }

@@ -6,8 +6,8 @@
       <span>Выделение оперативной памяти на игру: {{ value }}G</span>
       <input
         type="range"
-        min="3"
-        max="8"
+        :min="3"
+        :max="maxRam"
         v-model="value"
         step="0.5"
         class="slider"
@@ -16,39 +16,84 @@
     </div>
     <div class="dir-info">Директория загрузки файлов игры</div>
     <div class="common-dir">
-      <div class="dir">{{ commonDir }}</div>
-      <div class="delete"></div>
+      <a @click="openCommonDir" :title="commonDir" class="dir">
+        {{ commonDirFormatted }}
+      </a>
     </div>
     <div class="bottom-side">
       <div class="checkboxes">
-        <Checkbox>Автовход на сервер</Checkbox>
-        <Checkbox>Игра во весь экран</Checkbox>
+        <Checkbox v-model="states.autoConnect">Автовход на сервер</Checkbox>
+        <Checkbox v-model="states.fullscreen">Игра во весь экран</Checkbox>
       </div>
       <div class="dev">
         <div>DEV:</div>
-        <div>Programming: Sketch</div>
-        <div>Design: MugGod</div>
+        <div>
+          Programming:
+          <span @click="openDeveloper('Sketch')" class="click">Sketch</span>
+        </div>
+        <div>
+          Design:
+          <span @click="openDeveloper('MugGod')" class="click">MugGod</span>
+        </div>
       </div>
     </div>
-    <button class="btn btn-primary save">Сохранить</button>
+    <button @click="onSave" class="btn btn-primary save">Сохранить</button>
   </div>
 </template>
 
 <script>
 import Checkbox from '../components/Checkbox'
 import ConfigManager from '../core/ConfigManager'
+const { shell } = require('electron')
 
+const developers = {
+  Sketch: 'https://telegram.me/sketchpiece',
+  MugGod: 'https://vk.com/id281711712'
+}
+
+function truncate(str, n) {
+  return str.length > n ? str.substr(0, n - 1) + '...' : str
+}
 export default {
   components: {
     Checkbox
   },
   data: () => ({
     value: 3,
-    commonDir: ''
+    maxRam: 4,
+    commonDir: '',
+    states: {
+      fullscreen: false,
+      autoConnect: false
+    }
   }),
   mounted() {
     ConfigManager.load()
     this.commonDir = ConfigManager.getCommonDirectory()
+    this.maxRam = ConfigManager.getAbsoluteMaxRAM()
+    this.value = +ConfigManager.getMaxRAM().replace('M', '') / 1000
+    this.states.fullscreen = ConfigManager.getFullscreen()
+    this.states.autoConnect = ConfigManager.getAutoConnect()
+  },
+  methods: {
+    openCommonDir() {
+      shell.openPath(this.commonDir)
+    },
+    onSave() {
+      ConfigManager.setMaxRAM(`${this.value * 1000}M`)
+      ConfigManager.setFullscreen(this.states.fullscreen)
+      ConfigManager.setAutoConnect(this.states.autoConnect)
+      ConfigManager.save()
+      this.$emit('close')
+    },
+    openDeveloper(name) {
+      shell.openExternal(developers[name])
+    }
+  },
+  computed: {
+    commonDirFormatted() {
+      return truncate(this.commonDir, 50)
+    }
   }
 }
 </script>
@@ -56,6 +101,9 @@ export default {
 <style lang="scss" scoped>
 .wrapper {
   width: 100%;
+}
+.click {
+  cursor: pointer;
 }
 .bottom-side {
   margin-top: 10px;
@@ -84,9 +132,9 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 15px;
   span {
-    width: 230px;
+    width: 235px;
     font-size: 10px;
     margin-left: 10px;
     // text-align: center;
@@ -104,16 +152,17 @@ export default {
   text-align: center;
 }
 .common-dir {
+  margin-top: 3px;
   width: 100%;
-  // padding: 3px;
-  font-size: 6px;
+  font-size: 8px;
   background-color: #8b606a;
-  height: 9px;
+  height: 10px;
   border-radius: 11px;
   display: flex;
-  // justify-content: center;
   align-items: center;
   position: relative;
+  text-overflow: ellipsis;
+
   .dir {
     cursor: pointer;
     width: 100%;

@@ -1,6 +1,12 @@
 <template>
   <label for="remember-pass" class="check-remember">
-    <input type="checkbox" id="remember-pass" :disabled="disabled" />
+    <input
+      type="checkbox"
+      id="remember-pass"
+      :disabled="disabled"
+      v-model="state"
+      @change="onChange"
+    />
     <span> <slot /> </span>
   </label>
 </template>
@@ -8,7 +14,24 @@
 <script>
 export default {
   props: {
-    disabled: Boolean
+    disabled: Boolean,
+    value: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: () => ({
+    state: false
+  }),
+  watch: {
+    value(state) {
+      this.state = state
+    }
+  },
+  methods: {
+    onChange() {
+      this.$emit('input', this.state)
+    }
   }
 }
 </script>

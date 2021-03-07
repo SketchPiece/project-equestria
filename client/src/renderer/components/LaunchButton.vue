@@ -18,7 +18,6 @@ export default {
   }),
   methods: {
     onClick() {
-      console.log('click')
       this.active = true
       this.$emit('click')
       setTimeout(() => {
