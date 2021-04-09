@@ -25,7 +25,7 @@ $ npm run client:install
 
 To check the installation of the game files in the launcher, you need to install the files in the **minecraft** folder
 
-Example files:
+[Example files](https://drive.google.com/file/d/1OCbn6fHBNSSkRUGAaCml9ydq0aM9tmkN/view?usp=sharing)
 
 ```bash
 # backend development
