@@ -22,8 +22,8 @@ class LoggerBuilder {
   }
 }
 
-export async function cashAssets() {
-  const logger = new LoggerBuilder('AssetCasher')
+export async function cacheAssets() {
+  const logger = new LoggerBuilder('AssetCacher')
   logger.log('Starting cashing assets...')
   const minecraftZipFolder = path.join(DOWNLOADS_FOLDER, 'minecraft.zip')
   await zipFolder(ROOT_FOLDER, minecraftZipFolder)
@@ -56,12 +56,12 @@ export function zipFolder(path: string, output: string): Promise<number> {
 
 export async function hashFolders(pth, folders) {
   if (!fs.existsSync(path.resolve(DOWNLOADS_FOLDER, 'minecraft.zip')))
-    await cashAssets()
+    await cacheAssets()
   const hashedFolders = []
   for (const folder of folders) {
     const { hash } = await hashElement(path.resolve(pth, folder))
     const zipped = path.resolve(DOWNLOADS_FOLDER, `${folder}.zip`)
-    if (!fs.existsSync(zipped)) await cashAssets()
+    if (!fs.existsSync(zipped)) await cacheAssets()
     const size = fs.statSync(zipped).size
     hashedFolders.push({ name: folder, hash, size })
   }

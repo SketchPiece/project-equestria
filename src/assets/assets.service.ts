@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import {
-  cashAssets,
+  cacheAssets,
   DOWNLOADS_FOLDER,
   hashFiles,
   hashFolders,
@@ -43,7 +43,7 @@ export class AssetsService {
       const assetPath = path.join(DOWNLOADS_FOLDER, `${asset.value}.zip`)
       if (!config.includeForse.includes(asset.value))
         throw new BadRequestException()
-      if (!fs.existsSync(assetPath)) await cashAssets()
+      if (!fs.existsSync(assetPath)) await cacheAssets()
       return assetPath
     } else if (asset.type === 'path') {
       const assetPath = path.join(ROOT_FOLDER, asset.value)
@@ -51,7 +51,7 @@ export class AssetsService {
       return assetPath
     }
     const assetsPath = path.join(DOWNLOADS_FOLDER, `${ROOT_FOLDER_NAME}.zip`)
-    if (!fs.existsSync(assetsPath)) await cashAssets()
+    if (!fs.existsSync(assetsPath)) await cacheAssets()
     return assetsPath
   }
 }

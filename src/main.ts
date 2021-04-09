@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import { cashAssets } from './assets/utils'
+import { cacheAssets } from './assets/utils'
 
-const CASH_ASSETS = process.env.NODE_ENV === 'build'
+const CACHE_ASSETS = process.env.NODE_ENV === 'cache'
 
 async function bootstrap() {
-  if (CASH_ASSETS) return await cashAssets()
+  if (CACHE_ASSETS) return await cacheAssets()
   const app = await NestFactory.create(AppModule)
   app.enableCors({
     origin: '*',
