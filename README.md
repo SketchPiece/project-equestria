@@ -2,7 +2,7 @@
 
 > Launcher for Minecraft on Electron
 
-# Features
+## Features
 
 - Java validation and installation
 - Full validation based on information from the server and installation of game files
